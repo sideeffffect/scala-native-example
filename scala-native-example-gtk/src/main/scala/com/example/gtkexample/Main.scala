@@ -19,21 +19,19 @@ object Main:
 
   private def callback(application: Ptr[GtkApplication], data: gpointer): Unit =
 
-    val window = gtk_application_window_new(application)
+    val window = gtk_application_window_new(application).asPtr[GtkWindow]
 
-    gtk_window_set_title(
-      window.asInstanceOf[Ptr[GtkWindow]],
-      c"Hello from Scala Native"
-    )
-    gtk_window_set_default_size(window.asPtr[GtkWindow], 200, 200)
+    gtk_window_set_title(window, c"Hello from Scala Native")
+    gtk_window_set_default_size(window, 200, 200)
 
-    val box = gtk_box_new(GtkOrientation.GTK_ORIENTATION_VERTICAL, 0)
-    gtk_widget_set_halign(box, GtkAlign.GTK_ALIGN_CENTER)
-    gtk_widget_set_valign(box, GtkAlign.GTK_ALIGN_CENTER)
+    val box =
+      gtk_box_new(GtkOrientation.GTK_ORIENTATION_VERTICAL, 0).asPtr[GtkBox]
+    gtk_widget_set_halign(box.asPtr[GtkWidget], GtkAlign.GTK_ALIGN_CENTER)
+    gtk_widget_set_valign(box.asPtr[GtkWidget], GtkAlign.GTK_ALIGN_CENTER)
 
-    gtk_window_set_child(window.asPtr[GtkWindow], box)
+    gtk_window_set_child(window, box.asPtr[GtkWidget])
 
-    val button = gtk_button_new_with_label(c"Press me")
+    val button = gtk_button_new_with_label(c"Press me").asPtr[GtkButton]
 
     g_signal_connect(
       button,
@@ -41,9 +39,9 @@ object Main:
       CFuncPtr2.fromScalaFunction(printHello)
     )
 
-    gtk_box_append(box.asPtr[GtkBox], button)
+    gtk_box_append(box, button.asPtr[GtkWidget])
 
-    gtk_widget_show(window)
+    gtk_widget_show(window.asPtr[GtkWidget])
 
   end callback
 
