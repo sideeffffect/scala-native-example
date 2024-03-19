@@ -9,16 +9,16 @@ import fs2.io.net.tls.{S2nConfig, TLSContext}
 import org.http4s.ember.client.EmberClientBuilder
 import org.http4s.ember.server.EmberServerBuilder
 
-object Main extends EpollApp.Simple {
+object Main extends EpollApp.Simple:
 
   override def run: IO[Unit] =
     resource.useForever
 
-  private lazy val resource: Resource[IO, Unit] = for {
-    tlsContext <- S2nConfig.builder
+  private lazy val resource: Resource[IO, Unit] = for
+    s2nConfig <- S2nConfig.builder
       .withCipherPreferences("default_tls13")
       .build[IO]
-      .map(Network[IO].tlsContext.fromS2nConfig(_))
+    tlsContext = Network[IO].tlsContext.fromS2nConfig(s2nConfig)
     client <- EmberClientBuilder
       .default[IO]
       .withTLSContext(tlsContext)
@@ -34,6 +34,4 @@ object Main extends EpollApp.Simple {
     _ <- IO
       .println(show"baseUri: ${server.baseUri}, isSecure: ${server.isSecure}")
       .toResource
-  } yield ()
-
-}
+  yield ()
