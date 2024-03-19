@@ -3,6 +3,7 @@ package com.example.typelevel
 import cats.effect.IO
 import cats.effect.kernel.Resource
 import cats.implicits.*
+import com.example.library.Adder
 import epollcat.EpollApp
 import fs2.io.net.Network
 import fs2.io.net.tls.{S2nConfig, TLSContext}
@@ -24,7 +25,8 @@ object Main extends EpollApp.Simple:
       .withTLSContext(tlsContext)
       .withHttp2
       .build
-    business = Business(client)
+    adder = Adder(42)
+    business = Business(client, adder)
     routes = Routes(business)
     server <- EmberServerBuilder
       .default[IO]
